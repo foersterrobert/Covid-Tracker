@@ -46,23 +46,33 @@ class App:
             # 'Gesamt': [(0, 0), self.data[16]],
         }
 
+        self.gesamt = self.data[16]
+
+        self.incidenceText = '\n'.join([f'{i}: {j[1][1]}' for (i, j) in self.bundeslandL.items()]) + '\n\nGesamt:' + self.gesamt[1]
+        self.casesText = '\n'.join([f'{i}: {j[1][0]}' for (i, j) in self.bundeslandL.items()]) + '\n\nGesamt:' + self.gesamt[0]
+        
+        self.today = datetime.now()
+
         self.lF = tk.LabelFrame(root, bd=0, bg='white', height=750)
         self.lF.grid(row=0, column=0, sticky='N')
 
         self.rF = tk.LabelFrame(root, bd=0, bg='white')
         self.rF.grid(row=0, column=1)
 
-        self.label = tk.Label(self.lF, bg='white', font=('Courier', 16), text='\n'.join([f'{i}: {j[1][1]}' for (i, j) in self.bundeslandL.items()]))
-        self.label.grid(row=0, column=0, sticky='N', pady=(70, 5), padx=10)
+        self.label = tk.Label(self.lF, bg='white', justify='left', font=('Courier', 16), text=self.incidenceText)
+        self.label.grid(row=0, column=0, sticky='N', pady=(50, 5), padx=10)
 
         self.bF = tk.LabelFrame(self.lF, bd=0, bg='white')
-        self.bF.grid(row=1, column=0, sticky='S', pady=(10, 0))
+        self.bF.grid(row=1, column=0, sticky='W', pady=(190, 0), padx=10)
 
-        self.Cbtn = tk.Button(self.bF, text='cases', command=self.cases, bg='white')
+        self.Cbtn = tk.Button(self.bF, text='cases', font=18, command=self.cases, bg='white')
         self.Cbtn.grid(row=0, column=1, padx=3)
 
-        self.Ibtn = tk.Button(self.bF, text='incidence', command=self.incidence, bg='#dce6f5')
+        self.Ibtn = tk.Button(self.bF, text='incidence', font=18, command=self.incidence, bg='#dce6f5')
         self.Ibtn.grid(row=0, column=0, padx=3)
+
+        self.info = tk.Label(self.lF, bg='white', justify='left', font=('Courier', 16), text=f'Source: rki.de\nDate: {self.today.strftime("%d.%m.")}')
+        self.info.grid(row=2, column=0, sticky='W', pady=(20, 20), padx=10)
 
         self.fig = Figure(figsize=(7,8))
         self.fig.subplots_adjust(left=0.05, bottom=0.03, right=.98, top=0.96)
@@ -89,13 +99,13 @@ class App:
     def cases(self):
         self.Ibtn['bg'] = 'white'
         self.Cbtn['bg'] = '#dce6f5'
-        self.label['text'] = '\n'.join([f'{i}: {j[1][0]}' for (i, j) in self.bundeslandL.items()])
+        self.label['text'] = self.casesText
         self.mapPlot(s=0)
 
     def incidence(self):
         self.Cbtn['bg'] = 'white'
         self.Ibtn['bg'] = '#dce6f5'
-        self.label['text'] = '\n'.join([f'{i}: {j[1][1]}' for (i, j) in self.bundeslandL.items()])
+        self.label['text'] = self.incidenceText
         self.mapPlot(s=1)
 
 
